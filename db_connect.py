@@ -27,10 +27,14 @@ def check_date_on_last_row(cur, table_name=None):
         return date
 
 
-def get_data(cur, row_nums):
-    res = cur.execute("SELECT date, temp FROM out_temp WHERE id > ((SELECT max(id) FROM out_temp) - :row_nums)", {"row_nums": row_nums})
-    return res.fetchall()
-    
+def get_data(cur, table_name=None, row_nums=None):
+    if table_name == "out_temp":
+        res = cur.execute("SELECT date, temp FROM out_temp WHERE id > ((SELECT max(id) FROM out_temp) - :row_nums)", {"row_nums": row_nums})
+        return res.fetchall()
+    if table_name == "energy_price":
+        res = cur.execute("SELECT date, price FROM energy_price WHERE id > ((SELECT max(id) FROM energy_price) - :row_nums)", {"row_nums": row_nums})
+        return res.fetchall()
+
 #  Connecting to our database and dumping data. Queries coming later.
 def talk_to_db(o_date=None, o_temp=None, room_temp=None, fetch=False, table_name=None, row_nums=None, getting_data=False, eng_price=None, eng_date=None):
     con = sqlite3.connect("data.db")
@@ -40,6 +44,6 @@ def talk_to_db(o_date=None, o_temp=None, room_temp=None, fetch=False, table_name
         if fetch is True:
             return check_date_on_last_row(cur, table_name)
         if getting_data is True:
-            return get_data(cur, row_nums)
+            return get_data(cur, table_name, row_nums)
         add_items(cur, o_date, o_temp, room_temp, eng_price, eng_date)
         con.commit()
