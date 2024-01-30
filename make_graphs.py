@@ -6,6 +6,7 @@ def getting_data_from_db():
     outside_temp_48h = talk_to_db(getting_data=True, table_name="out_temp", row_nums=48)
     energy_prices_48h = talk_to_db(getting_data=True, table_name="energy_price", row_nums=48)
     room_temp = talk_to_db(getting_data=True, table_name="room_temp", row_nums=48)
+    avg_prices_y = talk_to_db(getting_data=True, table_name="avg_prices", row_nums=12)
 
     out_x = []
     out_y = []
@@ -15,6 +16,8 @@ def getting_data_from_db():
 
     room_x = []
     room_y = []
+
+    avg_prices = []
 
     for value in energy_prices_48h:
         energy_x.append(value[0])
@@ -27,10 +30,14 @@ def getting_data_from_db():
     for value in room_temp:
         room_x.append(value[0])
         room_y.append(float(value[1]))
-    return out_x, out_y, energy_x, energy_y, room_x, room_y
+
+    for value in avg_prices_y:
+        avg_prices.append(float(value[1]))
+
+    return out_x, out_y, energy_x, energy_y, room_x, room_y, avg_prices
 
 
-out_x, out_y, energy_x, energy_y, room_x, room_y = getting_data_from_db()
+out_x, out_y, energy_x, energy_y, room_x, room_y, avg_prices = getting_data_from_db()
 
 if __name__ == "__main__":
     fig = make_subplots(rows=2, cols=2)
